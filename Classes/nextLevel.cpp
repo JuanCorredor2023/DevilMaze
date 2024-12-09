@@ -37,7 +37,7 @@ bool NextLevel::init()
     }
 
     // Crear el label que indica pasar al siguiente nivel
-    nextLevelLabel = Label::createWithTTF("TOCA PARA PASAR AL SIGUIENTE NIVEL", "fonts/arial.ttf", 26);
+    nextLevelLabel = Label::createWithTTF("TAP TO CONTINUE...", "fonts/GhostDied-own5a.ttf", 35);
     if (nextLevelLabel == nullptr)
     {
         CCLOG("Error al cargar la fuente 'arial.ttf'");

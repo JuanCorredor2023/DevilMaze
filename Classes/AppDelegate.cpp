@@ -1,9 +1,8 @@
-// AppDelegate.cpp
 #include "AppDelegate.h"
 #include "StartScene.h" // Incluye la nueva escena de inicio
 
-// #define USE_AUDIO_ENGINE 1
-// #define USE_SIMPLE_AUDIO_ENGINE 1
+#define USE_AUDIO_ENGINE 1
+// #define USE_SIMPLE_AUDIO_ENGINE 1 // Desactivado para usar solo AudioEngine
 
 #if USE_AUDIO_ENGINE && USE_SIMPLE_AUDIO_ENGINE
 #error "Don't use AudioEngine and SimpleAudioEngine at the same time. Please just select one in your game!"
@@ -24,12 +23,9 @@ static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);
 static cocos2d::Size mediumResolutionSize = cocos2d::Size(1024, 768);
 static cocos2d::Size largeResolutionSize = cocos2d::Size(2048, 1536);
 
-AppDelegate::AppDelegate()
-{
-}
+AppDelegate::AppDelegate() {}
 
-AppDelegate::~AppDelegate()
-{
+AppDelegate::~AppDelegate() {
 #if USE_AUDIO_ENGINE
     AudioEngine::end();
 #elif USE_SIMPLE_AUDIO_ENGINE
@@ -37,70 +33,62 @@ AppDelegate::~AppDelegate()
 #endif
 }
 
-// Si deseas un contexto diferente, modifica el valor de glContextAttrs
-// afectará a todas las plataformas
-void AppDelegate::initGLContextAttrs()
-{
-    // Establecer atributos del contexto OpenGL: red,green,blue,alpha,depth,stencil,multisamplesCount
+void AppDelegate::initGLContextAttrs() {
+    // Atributos del contexto OpenGL
     GLContextAttrs glContextAttrs = {8, 8, 8, 8, 24, 8, 0};
-
     GLView::setGLContextAttrs(glContextAttrs);
 }
 
-// Si deseas usar el administrador de paquetes para instalar más paquetes,
-// no modifiques ni elimines esta función
-static int register_all_packages()
-{
+static int register_all_packages() {
     return 0; // Flag para el administrador de paquetes
 }
 
 bool AppDelegate::applicationDidFinishLaunching() {
-    // Inicializar director
+    // Inicializar el director
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
-    if(!glview) {
+    if (!glview) {
         glview = GLViewImpl::create("DevilMaze");
         director->setOpenGLView(glview);
-
     }
 
-    // Activar la visualización de FPS
+    // Mostrar FPS
     director->setDisplayStats(true);
 
-    // Establecer FPS. El valor predeterminado es 1.0/60 si no llamas a esto
+    // Establecer FPS
     director->setAnimationInterval(1.0f / 60);
 
-    // Establecer la resolución de diseño
+    // Configurar resolución de diseño
     glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::NO_BORDER);
     auto frameSize = glview->getFrameSize();
-    // Si la altura del frame es mayor que la altura del tamaño medio
-    if (frameSize.height > mediumResolutionSize.height)
-    {
-        director->setContentScaleFactor(MIN(largeResolutionSize.height/designResolutionSize.height, largeResolutionSize.width/designResolutionSize.width));
-    }
-    // Si la altura del frame es mayor que la altura del tamaño pequeño
-    else if (frameSize.height > smallResolutionSize.height)
-    {
-        director->setContentScaleFactor(MIN(mediumResolutionSize.height/designResolutionSize.height, mediumResolutionSize.width/designResolutionSize.width));
-    }
-    // Si la altura del frame es menor que la altura del tamaño medio
-    else
-    {
-        director->setContentScaleFactor(MIN(smallResolutionSize.height/designResolutionSize.height, smallResolutionSize.width/designResolutionSize.width));
+    if (frameSize.height > mediumResolutionSize.height) {
+        director->setContentScaleFactor(MIN(largeResolutionSize.height / designResolutionSize.height,
+                                            largeResolutionSize.width / designResolutionSize.width));
+    } else if (frameSize.height > smallResolutionSize.height) {
+        director->setContentScaleFactor(MIN(mediumResolutionSize.height / designResolutionSize.height,
+                                            mediumResolutionSize.width / designResolutionSize.width));
+    } else {
+        director->setContentScaleFactor(MIN(smallResolutionSize.height / designResolutionSize.height,
+                                            smallResolutionSize.width / designResolutionSize.width));
     }
 
     register_all_packages();
 
-    // Crear la escena de inicio
-    auto scene = StartScene::createScene();
+    // Reproducir música de fondo en bucle
+    int musicId = AudioEngine::play2d("background_music.mp3", true);
+    if (musicId == AudioEngine::INVALID_AUDIO_ID) {
+        CCLOG("Error: No se pudo cargar la música de fondo.");
+    } else {
+        CCLOG("Música de fondo reproducida con éxito.");
+    }
 
-    // Ejecutar la escena
+    // Crear y ejecutar la escena inicial
+    auto scene = StartScene::createScene();
     director->runWithScene(scene);
 
     return true;
 }
 
-// Esta función será llamada cuando la aplicación esté inactiva. Nota, al recibir una llamada telefónica se invoca.
 void AppDelegate::applicationDidEnterBackground() {
     Director::getInstance()->stopAnimation();
 
@@ -112,7 +100,6 @@ void AppDelegate::applicationDidEnterBackground() {
 #endif
 }
 
-// Esta función será llamada cuando la aplicación esté activa de nuevo
 void AppDelegate::applicationWillEnterForeground() {
     Director::getInstance()->startAnimation();
 

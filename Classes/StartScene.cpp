@@ -39,7 +39,7 @@ bool StartScene::init()
     }
 
     // Crear el label que actúa como botón
-    nextSceneLabel = Label::createWithTTF("CLICK TO CONTINUE...", "fonts/arial.ttf", 26);
+    nextSceneLabel = Label::createWithTTF("TAP TO CONTINUE...", "fonts/GhostDied-own5a.ttf", 35);
     if (nextSceneLabel == nullptr)
     {
         CCLOG("Error al cargar la fuente 'arial.ttf'");
